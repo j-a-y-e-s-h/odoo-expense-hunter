@@ -12,7 +12,7 @@ This bookmarklet is a **quick-access search tool** for Odoo expense records that
 
 ## How It Works
 
-### Data Scope
+### Data Scope 
 The bookmarklet searches within two connected Odoo models:
 - **`expense.usage.line`** — individual expense entries/line items
 - **`mail.message`** — activity logs and status change history attached to expense records
