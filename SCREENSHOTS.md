@@ -2,10 +2,15 @@
 
 ## 1. Bookmarklet in Action
 
-### Main Panel - Filter View
-![Expense Log Search Panel](docs/main-search-panel.png)
+### Bookmarklet Overview
+![Bookmarklet Overview](docs/bookmarklet-overview.png)
 
-The bookmarklet appears as a clean right-side panel on your Odoo Expense page. Shows:
+Shows the complete bookmarklet interface in action on your Odoo Expense page.
+
+### Main Panel - Filter View
+![Expense Log Search Panel](docs/search-feature.png)
+
+Shows the bookmarklet appears as a clean right-side panel on your Odoo Expense page. Shows:
 - **Blue header** with title "Expense Log Search" + close button (✕)
 - **Person dropdown** — auto-populated with 15+ employees from your system
 - **Status dropdown** — All Status / Draft / Submitted / Posted / Rejected
@@ -13,24 +18,14 @@ The bookmarklet appears as a clean right-side panel on your Odoo Expense page. S
 - **Search button** — blue CTA to execute the search
 - **Info area** — shows status ("Ready. Select filters and press Search")
 
-![Employee Filter Dropdown](docs/employee-filter-dropdown.png)
-
----
-
-### Full Integration - Live Odoo Page
-![Full Odoo Expense Page with Panel](docs/odoo-integration-full-page.png)
-
-Shows the bookmarklet integrated seamlessly into Odoo's Expense Usage page:
-- Left side: Standard Odoo expense table (dates, employees, expense types, amounts)
-- Right side: Expense Log Search panel with dropdown open
-- **Person list visible:** Ashok Patel, Abhay Iathiya, Ajay Dhoriya, Arpit Patel, Ashok Patel, Aaif Raza, Dharmik Savani, Dhaval Patel, Dhruvin Rakholiya, Kavy Parmar, Mahendra Jamanesha, Pinank Timbadiya, Rashik Mavani, Tulsi Makwana, Vishal Kalathiya
+![Employee Filter Dropdown](docs/all-persons-filter.png)
 
 ---
 
 ## 2. Status Filter Options
 
 ### Status Dropdown Expanded
-![Status Filter Dropdown](docs/status-filter-dropdown.png)
+![Status Filter Dropdown](docs/status-filter.png)
 ```
 All Status          (selected - shows all)
 Draft              (expenses not yet submitted)
@@ -63,24 +58,23 @@ Rejected           (rejected, needs revision)
 
 ## How to Add Screenshots
 
-To include screenshots in this repo:
+Screenshots are stored in the `docs/` folder with descriptive names:
 
-1. **Take screenshots** of the bookmarklet in action (as shown above)
-2. **Create directories:**
-   ```
-   mkdir docs
-   ```
-3. **Save screenshots as:**
-   - `docs/main-search-panel.png` — Main panel view
-   - `docs/employee-filter-dropdown.png` — Employee/Person dropdown
-   - `docs/status-filter-dropdown.png` — Status filter dropdown
-   - `docs/odoo-integration-full-page.png` — Full page integration
-   - `docs/search-results-example.png` — Results example (optional)
+**Current screenshots:**
+- `docs/bookmarklet-overview.png` — Full bookmarklet interface view
+- `docs/all-persons-filter.png` — Employee/Person dropdown
+- `docs/status-filter.png` — Status filter options
+- `docs/search-feature.png` — Search feature in action
+- `docs/odoo-integration-full-page.png` — Full page integration (optional)
 
-4. **Commit:**
+**To update or add screenshots:**
+1. Take new screenshots of the bookmarklet
+2. Save them to the `docs/` folder with descriptive names
+3. Update the references in this file
+4. Commit and push:
    ```
    git add docs/
-   git commit -m "Add production screenshots with descriptive names"
+   git commit -m "Update screenshots with latest images"
    git push
    ```
 
