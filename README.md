@@ -6,6 +6,8 @@ This bookmarklet is a **quick-access search tool** for Odoo expense records that
 
 **Use case:** Finance teams and expense approvers can instantly find expenses by employee, status, or keyword without navigating through multiple Odoo screens.
 
+🎬 **[View Screenshots & Demo →](SCREENSHOTS.md)**
+
 ---
 
 ## How It Works
