@@ -1,0 +1,9 @@
+---
+blank_issues_are_enabled: true
+contact_links:
+  - name: Odoo Documentation
+    url: https://www.odoo.com/documentation/
+    about: See Odoo official documentation
+  - name: Report Security Issue
+    url: https://github.com/j-a-y-e-s-h/odoo-expense-hunter/security/advisories/new
+    about: Responsibly report a security vulnerability
