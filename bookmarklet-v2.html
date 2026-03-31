@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Copy Improved Bookmarklet</title>
+<style>
+body{font-family:sans-serif;padding:2rem;max-width:700px;margin:0 auto;background:#f5f5f5;}
+h2{margin-bottom:6px;}p{color:#555;font-size:14px;margin-bottom:14px;}
+textarea{width:100%;height:130px;font-family:monospace;font-size:11px;padding:10px;border:1px solid #ccc;border-radius:8px;resize:none;background:#1a1a2e;color:#7ee8a2;}
+.copy-btn{margin-top:10px;background:#2d6cdf;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:15px;cursor:pointer;}
+.ok{color:green;margin-left:12px;font-size:14px;display:none;}
+.steps{background:#fff;border-radius:10px;padding:1rem 1.5rem;margin-top:1.5rem;border:1px solid #ddd;}
+.steps li{font-size:14px;margin:8px 0;color:#333;line-height:1.6;}
+</style>
+</head>
+<body>
+<h2>🔧 Improved Expense Log Search</h2>
+<p>Now with <b>Person filter</b>, <b>Status filter</b>, and searches status change logs too.</p>
+<textarea id="code" readonly>javascript:void(function(){var ex=document.getElementById('olp2');if(ex){ex.remove();return;}var s=document.createElement('style');s.textContent='#olp2{position:fixed;top:0;right:0;width:480px;height:100vh;background:#fff;z-index:9999999;box-shadow:-4px 0 24px rgba(0,0,0,0.2);display:flex;flex-direction:column;font-family:sans-serif;font-size:13px}#olp2 *{box-sizing:border-box}#olp2-h{background:#2d6cdf;color:#fff;padding:10px 14px;display:flex;align-items:center}#olp2-h b{flex:1;font-size:14px}#olp2-h button{background:rgba(255,255,255,0.25);border:none;color:#fff;padding:3px 10px;border-radius:5px;cursor:pointer;font-size:13px}#olp2-f{padding:8px 10px;border-bottom:1px solid #eee;display:flex;flex-direction:column;gap:6px}#olp2-f input,#olp2-f select{border:1px solid #ccc;border-radius:5px;padding:6px 8px;font-size:13px;width:100%;background:#fff;color:#222}#olp2-f .row{display:flex;gap:6px}#olp2-f .row select{flex:1}#olp2-f .go{background:#2d6cdf;color:#fff;border:none;border-radius:5px;padding:6px 16px;cursor:pointer;font-size:13px;font-weight:600;white-space:nowrap}#olp2-info{padding:5px 10px;font-size:11px;color:#888;border-bottom:1px solid #eee;min-height:24px}#olp2-r{flex:1;overflow-y:auto}.olr2{padding:9px 12px;border-bottom:1px solid #f0f0f0;cursor:pointer}.olr2:hover{background:#f0f5ff}.olr2-top{display:flex;justify-content:space-between;margin-bottom:3px}.olr2-name{font-weight:600;color:#222;font-size:12px}.olr2-date{font-size:10px;color:#999}.olr2-body{color:#444;font-size:12px;line-height:1.4}.olr2-link{color:#2d6cdf;font-size:11px;margin-top:2px}.badge-p{display:inline-block;background:#eef6e8;color:#2d6d1a;border-radius:20px;font-size:10px;padding:1px 7px;margin-left:5px}.badge-s{display:inline-block;background:#fef5e0;color:#8a6000;border-radius:20px;font-size:10px;padding:1px 7px;margin-left:5px}.badge-r{display:inline-block;background:#fce8e8;color:#a32d2d;border-radius:20px;font-size:10px;padding:1px 7px;margin-left:5px}.olp2-empty{text-align:center;padding:2rem;color:#bbb;font-size:13px}';document.head.appendChild(s);var p=document.createElement('div');p.id='olp2';p.innerHTML='<div id="olp2-h"><b>&#128269; Expense Log Search</b><button onclick="document.getElementById(\'olp2\').remove()">&#10005;</button></div><div id="olp2-f"><input id="olp2-q" placeholder="Keyword in logs (optional)" /><div class="row"><select id="olp2-per"><option value="">All Persons</option></select><select id="olp2-st"><option value="">All Status</option><option value="draft">Draft</option><option value="submit">Submitted</option><option value="post">Posted</option><option value="refuse">Rejected</option></select><button class="go" onclick="olp2Search()">Search</button></div></div><div id="olp2-info">Loading persons...</div><div id="olp2-r"><div class="olp2-empty">Set filters and press Search</div></div>';document.body.appendChild(p);document.getElementById('olp2-q').onkeydown=function(e){if(e.key==='Enter')olp2Search();};fetch('/web/dataset/call_kw',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({jsonrpc:'2.0',method:'call',id:1,params:{model:'expense.usage.line',method:'search_read',args:[[]],kwargs:{fields:['expense_advance'],limit:false}}})}).then(function(r){return r.json();}).then(function(d){var persons=[...new Set((d.result||[]).map(function(r){return r.expense_advance;}).filter(Boolean))].sort();var sel=document.getElementById('olp2-per');persons.forEach(function(n){var o=document.createElement('option');o.value=n;o.textContent=n;sel.appendChild(o);});document.getElementById('olp2-info').textContent='Ready. '+persons.length+' persons loaded.';}).catch(function(){document.getElementById('olp2-info').textContent='Loaded. Ready to search.';});window.olp2Search=function(){var q=document.getElementById('olp2-q').value.trim();var per=document.getElementById('olp2-per').value;var st=document.getElementById('olp2-st').value;document.getElementById('olp2-info').textContent='Searching...';document.getElementById('olp2-r').innerHTML='<div class="olp2-empty">Please wait...</div>';var dom=[];if(per)dom.push(['expense_advance','=',per]);if(st)dom.push(['state','=',st]);fetch('/web/dataset/call_kw',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({jsonrpc:'2.0',method:'call',id:2,params:{model:'expense.usage.line',method:'search_read',args:[dom],kwargs:{fields:['id','expense_advance','state','narration','amount'],limit:2000}}})}).then(function(r){return r.json();}).then(function(d){var recs=d.result||[];if(!recs.length){document.getElementById('olp2-info').textContent='No expense records match filters.';document.getElementById('olp2-r').innerHTML='<div class="olp2-empty">No records found for selected filters.</div>';return;}var ids=recs.map(function(r){return r.id;});var recMap={};recs.forEach(function(r){recMap[r.id]=r;});var msgDom=[['model','=','expense.usage.line'],['res_id','in',ids]];if(q)msgDom.push(['body','ilike',q]);fetch('/web/dataset/call_kw',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({jsonrpc:'2.0',method:'call',id:3,params:{model:'mail.message',method:'search_read',args:[msgDom],kwargs:{fields:['id','body','date','author_id','res_id'],limit:200,order:'date desc'}}})}).then(function(r){return r.json();}).then(function(md){var msgs=md.result||[];document.getElementById('olp2-info').textContent='Found '+msgs.length+' log entries';if(!msgs.length){document.getElementById('olp2-r').innerHTML='<div class="olp2-empty">No logs found.</div>';return;}var h='';msgs.forEach(function(m){var body=m.body.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();var author=m.author_id?m.author_id[1]:'System';var dt=m.date?new Date(m.date).toLocaleString('en-IN'):'';var rec=recMap[m.res_id]||{};var recState=rec.state||'';var badge='';if(body.toLowerCase().includes('posted')||body.toLowerCase().includes('post'))badge='<span class="badge-p">Posted</span>';else if(body.toLowerCase().includes('reject')||body.toLowerCase().includes('refuse'))badge='<span class="badge-r">Rejected</span>';else badge='<span class="badge-s">Log</span>';var person=rec.expense_advance?'<span style="font-size:10px;color:#2d6cdf;margin-left:4px;">('+rec.expense_advance+')</span>':'';var url='/odoo/expense-usage/'+m.res_id;h+='<div class="olr2" onclick="window.open(\''+url+'\',\'_blank\')"><div class="olr2-top"><span class="olr2-name">'+author+badge+person+'</span><span class="olr2-date">'+dt+'</span></div><div class="olr2-body">'+body+'</div><div class="olr2-link">Open record #'+m.res_id+' &#8599;</div></div>';});document.getElementById('olp2-r').innerHTML=h;}).catch(function(e){document.getElementById('olp2-info').textContent='Error: '+e.message;});}).catch(function(e){document.getElementById('olp2-info').textContent='Error: '+e.message;});};})();</textarea>
+<br>
+<button class="copy-btn" onclick="copyIt()">📋 Copy Code</button>
+<span class="ok" id="ok">✓ Copied!</span>
+
+<div class="steps">
+  <strong>Steps to update your bookmark:</strong>
+  <ol>
+    <li>Click <b>Copy Code</b> above</li>
+    <li>Right-click <b>"Copy Bookmarklet..."</b> in Chrome bookmarks bar → <b>Edit</b></li>
+    <li>Click inside the URL field → <b>Ctrl+A</b> → Delete</li>
+    <li>Press <b>Ctrl+V</b> to paste → click <b>Save</b></li>
+    <li>Go to Odoo → click the bookmark</li>
+  </ol>
+  <br>
+  <strong>How to use new features:</strong>
+  <ul>
+    <li>🔽 <b>Person dropdown</b> — select any employee (auto-loaded)</li>
+    <li>🔽 <b>Status dropdown</b> — Draft / Submitted / Posted / Rejected</li>
+    <li>🔍 <b>Keyword</b> — optional extra filter on log text</li>
+    <li>Example: Select <b>Ashok Patel</b> + <b>Rejected</b> → see all rejected entries with logs</li>
+  </ul>
+</div>
+
+<script>
+function copyIt(){
+  var t=document.getElementById('code');t.select();document.execCommand('copy');
+  var ok=document.getElementById('ok');ok.style.display='inline';
+  setTimeout(function(){ok.style.display='none';},2500);
+}
+</script>
+</body>
+</html>
