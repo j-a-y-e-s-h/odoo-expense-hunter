@@ -3,7 +3,7 @@
 ## 1. Bookmarklet in Action
 
 ### Main Panel - Filter View
-![Expense Log Search Panel](docs/screenshot-1-panel.png)
+![Expense Log Search Panel](docs/main-search-panel.png)
 
 The bookmarklet appears as a clean right-side panel on your Odoo Expense page. Shows:
 - **Blue header** with title "Expense Log Search" + close button (✕)
@@ -13,10 +13,12 @@ The bookmarklet appears as a clean right-side panel on your Odoo Expense page. S
 - **Search button** — blue CTA to execute the search
 - **Info area** — shows status ("Ready. Select filters and press Search")
 
+![Employee Filter Dropdown](docs/employee-filter-dropdown.png)
+
 ---
 
 ### Full Integration - Live Odoo Page
-![Full Odoo Expense Page with Panel](docs/screenshot-2-integration.png)
+![Full Odoo Expense Page with Panel](docs/odoo-integration-full-page.png)
 
 Shows the bookmarklet integrated seamlessly into Odoo's Expense Usage page:
 - Left side: Standard Odoo expense table (dates, employees, expense types, amounts)
@@ -28,6 +30,7 @@ Shows the bookmarklet integrated seamlessly into Odoo's Expense Usage page:
 ## 2. Status Filter Options
 
 ### Status Dropdown Expanded
+![Status Filter Dropdown](docs/status-filter-dropdown.png)
 ```
 All Status          (selected - shows all)
 Draft              (expenses not yet submitted)
@@ -68,14 +71,16 @@ To include screenshots in this repo:
    mkdir docs
    ```
 3. **Save screenshots as:**
-   - `docs/screenshot-1-panel.png` — Panel view
-   - `docs/screenshot-2-integration.png` — Full page integration
-   - `docs/screenshot-3-results.png` — Results example (optional)
+   - `docs/main-search-panel.png` — Main panel view
+   - `docs/employee-filter-dropdown.png` — Employee/Person dropdown
+   - `docs/status-filter-dropdown.png` — Status filter dropdown
+   - `docs/odoo-integration-full-page.png` — Full page integration
+   - `docs/search-results-example.png` — Results example (optional)
 
 4. **Commit:**
    ```
    git add docs/
-   git commit -m "Add screenshots for documentation"
+   git commit -m "Add production screenshots with descriptive names"
    git push
    ```
 
