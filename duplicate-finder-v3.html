@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Duplicate Entry Finder v3</title>
+<style>
+body{font-family:sans-serif;padding:2rem;max-width:700px;margin:0 auto;background:#f5f5f5;}
+h2{margin-bottom:6px;}
+p{color:#555;font-size:14px;margin-bottom:14px;}
+textarea{width:100%;height:120px;font-family:monospace;font-size:11px;padding:10px;border:1px solid #ccc;border-radius:8px;resize:none;background:#1a1a2e;color:#7ee8a2;}
+.copy-btn{margin-top:10px;background:#2d6cdf;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:15px;cursor:pointer;}
+.ok{color:green;margin-left:12px;font-size:14px;display:none;}
+.features{background:#fff;border-radius:10px;padding:1rem 1.5rem;margin-top:1.5rem;border:1px solid #ddd;}
+.features li{font-size:13px;margin:5px 0;color:#333;line-height:1.5;}
+</style>
+</head>
+<body>
+<h2>🔍 Duplicate Entry Finder v3 — All Features</h2>
+<p>Bookmarklet auto-generated below. Click <b>Copy Code</b> → paste into bookmark URL field.</p>
+<textarea id="code" readonly>Generating bookmarklet code...</textarea>
+<br>
+<button class="copy-btn" onclick="copyIt()">📋 Copy Code</button>
+<span class="ok" id="ok">✓ Copied!</span>
+
+<div class="features">
+  <strong>All 8 improvements included:</strong>
+  <ul>
+    <li>✅ 3 modes: Person+Amount+Date | Person+Narration | Person+Amount (any date)</li>
+    <li>✅ Confidence score: <b style="color:#c0392b">High</b> / <b style="color:#e67e22">Medium</b> / <b style="color:#f39c12">Low</b></li>
+    <li>✅ Date range filter — From / To date picker</li>
+    <li>✅ Partner + Category filter dropdowns (auto-loaded)</li>
+    <li>✅ Sort by: Group size | Amount | Date | Confidence</li>
+    <li>✅ Diff highlight — yellow = fields that differ between duplicate records</li>
+    <li>✅ Export CSV — download all duplicate groups with confidence scores</li>
+    <li>✅ Bulk mark — select records with checkboxes → post warning log note</li>
+  </ul>
+</div>
+
+<script>
+function dupBookmarklet() {
+  var ex = document.getElementById('olp-dup');
+  if (ex) { ex.remove(); return; }
+
+  var CSS = '#olp-dup{position:fixed;top:0;right:0;width:520px;height:100vh;background:#fff;z-index:9999999;box-shadow:-4px 0 24px rgba(0,0,0,0.2);display:flex;flex-direction:column;font-family:sans-serif;font-size:13px}'
+    + '#olp-dup *{box-sizing:border-box}'
+    + '#dup-h{background:#c0392b;color:#fff;padding:10px 14px;display:flex;align-items:center}'
+    + '#dup-h b{flex:1;font-size:14px}'
+    + '#dup-hbtn{background:rgba(255,255,255,0.25);border:none;color:#fff;padding:3px 10px;border-radius:5px;cursor:pointer;font-size:13px}'
+    + '#dup-f{padding:8px 10px;border-bottom:1px solid #eee;display:flex;flex-direction:column;gap:5px}'
+    + '.dup-mode{display:flex}'
+    + '.dup-mode button{flex:1;padding:5px 3px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:11px;color:#555;line-height:1.3}'
+    + '.dup-mode button.act{background:#c0392b;color:#fff;border-color:#c0392b}'
+    + '.dup-mode button:first-child{border-radius:5px 0 0 5px}'
+    + '.dup-mode button:last-child{border-radius:0 5px 5px 0}'
+    + '.dr{display:flex;gap:5px}'
+    + '.dr select,.dr input{flex:1;border:1px solid #ccc;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff;color:#222;min-width:0}'
+    + '#dup-acts{display:flex;gap:5px;padding:6px 10px;border-bottom:1px solid #eee;background:#fafafa}'
+    + '#dup-acts button{flex:1;padding:6px 4px;border:1px solid #ccc;border-radius:5px;cursor:pointer;font-size:11px;background:#fff;color:#333}'
+    + '#dup-go{background:#c0392b;color:#fff;border-color:#c0392b;font-weight:700}'
+    + '#dup-exp{color:#1a6e1a;border-color:#aaddaa}'
+    + '#dup-mrk{color:#8a5e00;border-color:#ddcc88}'
+    + '#dup-selinfo{padding:5px 10px;font-size:11px;background:#fff8e1;border-bottom:1px solid #ffe082;display:none}'
+    + '#dup-info{padding:5px 10px;font-size:11px;color:#888;border-bottom:1px solid #eee;background:#fafafa;min-height:22px}'
+    + '#dup-sbar{padding:5px 10px;border-bottom:1px solid #eee;display:none;align-items:center;gap:6px;font-size:11px;color:#888}'
+    + '#dup-sbar select{border:1px solid #ccc;border-radius:4px;padding:3px 6px;font-size:11px;background:#fff;color:#222}'
+    + '#dup-badge{margin-left:auto;background:#fce8e8;color:#a32d2d;border-radius:20px;padding:1px 9px;font-size:10px;font-weight:600}'
+    + '#dup-r{flex:1;overflow-y:auto}'
+    + '.dg{border-bottom:2px solid #f0ede5}'
+    + '.dgh{background:#fff5f5;padding:7px 10px;font-size:12px;color:#c0392b;border-bottom:1px solid #fdd;display:flex;align-items:center;gap:5px}'
+    + '.gi{flex:1;font-weight:400;color:#888;font-size:11px;margin-left:4px}'
+    + '.ch{background:#c0392b;color:#fff;border-radius:20px;font-size:10px;padding:1px 8px;font-weight:600}'
+    + '.cm{background:#e67e22;color:#fff;border-radius:20px;font-size:10px;padding:1px 8px;font-weight:600}'
+    + '.cl{background:#f39c12;color:#fff;border-radius:20px;font-size:10px;padding:1px 8px;font-weight:600}'
+    + '.dr2{padding:6px 10px 6px 14px;border-bottom:1px solid #f8f5f0;font-size:12px;color:#444;display:flex;align-items:flex-start;gap:6px}'
+    + '.dr2:hover{background:#fef5f5}'
+    + '.dr2 input[type=checkbox]{margin-top:2px;flex-shrink:0;cursor:pointer}'
+    + '.drb{flex:1;cursor:pointer}'
+    + '.drt{display:flex;justify-content:space-between;align-items:center}'
+    + '.drid{color:#666;font-size:11px}'
+    + '.dramt{font-weight:600;color:#222}'
+    + '.drnarr{font-size:11px;margin-top:2px;display:block}'
+    + '.drdt{color:#aaa;font-size:11px;display:block;margin-top:1px}'
+    + '.drlk{color:#c0392b;font-size:11px;display:block;margin-top:2px}'
+    + '.xdf{background:#fff3cd;border-radius:3px;padding:0 3px;color:#7a5800}'
+    + '.xds{color:#bbb}'
+    + '.dem{text-align:center;padding:2rem;color:#bbb;font-size:13px}';
+
+  var styleEl = document.createElement('style');
+  styleEl.textContent = CSS;
+  document.head.appendChild(styleEl);
+
+  var panel = document.createElement('div');
+  panel.id = 'olp-dup';
+  document.body.appendChild(panel);
+
+  panel.innerHTML = ''
+    + '<div id="dup-h"><b>\uD83D\uDD0D Duplicate Entry Finder</b><button id="dup-hbtn" onclick="document.getElementById(\'olp-dup\').remove()">\u2715</button></div>'
+    + '<div id="dup-f">'
+    + '<div class="dup-mode">'
+    + '<button id="dm1" class="act" onclick="dupM(\'amt\')">Person + Amount + Date</button>'
+    + '<button id="dm2" onclick="dupM(\'narr\')">Person + Narration</button>'
+    + '<button id="dm3" onclick="dupM(\'amtany\')">Person + Amount (any date)</button>'
+    + '</div>'
+    + '<div class="dr"><select id="dup-per"><option value="">All Persons</option></select>'
+    + '<select id="dup-st"><option value="">All Status</option></select></div>'
+    + '<div class="dr"><select id="dup-prt"><option value="">All Partners</option></select>'
+    + '<select id="dup-cat"><option value="">All Categories</option></select></div>'
+    + '<div class="dr"><input type="date" id="dup-from" title="From date"><input type="date" id="dup-to" title="To date"></div>'
+    + '</div>'
+    + '<div id="dup-acts">'
+    + '<button id="dup-go" onclick="dupSearch()">\uD83D\uDD0D Find Duplicates</button>'
+    + '<button id="dup-exp" onclick="dupExport()">\u2193 Export CSV</button>'
+    + '<button id="dup-mrk" onclick="dupMark()">\uD83D\uDCDD Mark Selected</button>'
+    + '</div>'
+    + '<div id="dup-selinfo"></div>'
+    + '<div id="dup-info">Detecting fields...</div>'
+    + '<div id="dup-sbar">Sort: <select id="dup-sort" onchange="dupRender()">'
+    + '<option value="count">Group size</option>'
+    + '<option value="amt">Amount</option>'
+    + '<option value="date">Date</option>'
+    + '<option value="conf">Confidence</option>'
+    + '</select><span id="dup-badge"></span></div>'
+    + '<div id="dup-r"><div class="dem">Set filters and press Find Duplicates</div></div>';
+
+  window._dm = 'amt';
+  window._dF = { p: null, s: null, d: null, a: null, n: null, pt: null, c: null };
+  window._dG = [];
+
+  window.dupM = function(m) {
+    window._dm = m;
+    var ids = ['dm1', 'dm2', 'dm3'];
+    var modes = ['amt', 'narr', 'amtany'];
+    for (var i = 0; i < ids.length; i++) {
+      document.getElementById(ids[i]).className = modes[i] === m ? 'act' : '';
+    }
+  };
+
+  function rpc(params) {
+    return fetch('/web/dataset/call_kw', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ jsonrpc: '2.0', method: 'call', id: Math.random(), params: params })
+    }).then(function(r) { return r.json(); }).then(function(d) {
+      if (d.error) throw new Error(d.error.data && d.error.data.message || 'RPC error');
+      return d.result;
+    });
+  }
+
+  function getV(r, f) {
+    if (!f || r[f] === undefined || r[f] === false) return '';
+    var v = r[f];
+    return Array.isArray(v) ? (v[1] || '') : String(v);
+  }
+
+  function confScore(rows, F) {
+    if (rows.length < 2) return 'low';
+    var r0 = rows[0], r1 = rows[1];
+    var sc = 0;
+    if (F.a && parseFloat(r0[F.a] || 0).toFixed(2) === parseFloat(r1[F.a] || 0).toFixed(2)) sc += 2;
+    if (F.d && (r0[F.d] || '').toString().substring(0, 10) === (r1[F.d] || '').toString().substring(0, 10)) sc += 2;
+    if (F.n) {
+      var n0 = (r0[F.n] || '').trim().toLowerCase();
+      var n1 = (r1[F.n] || '').trim().toLowerCase();
+      if (n0 && n0 === n1) sc += 3;
+      else if (n0 && n1 && n0.substring(0, 20) === n1.substring(0, 20)) sc += 1;
+    }
+    if (F.pt && getV(r0, F.pt) && getV(r0, F.pt) === getV(r1, F.pt)) sc += 1;
+    return sc >= 6 ? 'high' : sc >= 3 ? 'medium' : 'low';
+  }
+
+  rpc({ model: 'expense.usage.line', method: 'fields_get', args: [], kwargs: { attributes: ['string', 'type', 'selection'] } }).then(function(fields) {
+    var F = window._dF;
+    function pick(candidates, type) {
+      for (var i = 0; i < candidates.length; i++) { if (fields[candidates[i]]) return candidates[i]; }
+      if (type) {
+        var ks = Object.keys(fields);
+        for (var j = 0; j < ks.length; j++) { if (fields[ks[j]].type === type) return ks[j]; }
+      }
+      return null;
+    }
+    F.p  = pick(['expense_advance', 'employee_id', 'user_id']);
+    F.s  = pick(['state', 'status']);
+    F.d  = pick(['expense_date', 'date', 'move_date', 'usage_date', 'date_expense'], 'date');
+    F.a  = pick(['amount', 'total', 'price_total', 'amount_total'], 'float');
+    F.n  = pick(['narration', 'description', 'note', 'notes']);
+    F.pt = pick(['partner_id', 'vendor_id', 'supplier_id']);
+    F.c  = pick(['category_id', 'expense_category', 'product_id', 'categ_id']);
+
+    var fetchF = [F.p, F.pt, F.c].filter(Boolean);
+    if (fetchF.length) {
+      rpc({ model: 'expense.usage.line', method: 'search_read', args: [[]], kwargs: { fields: fetchF, limit: false } }).then(function(recs) {
+        function pop(selId, field) {
+          if (!field) return;
+          var seen = {}, vals = [];
+          recs.forEach(function(r) { var v = getV(r, field); if (v && !seen[v]) { seen[v] = 1; vals.push(v); } });
+          vals.sort();
+          var sel = document.getElementById(selId);
+          vals.forEach(function(n) { var o = document.createElement('option'); o.value = n; o.textContent = n; sel.appendChild(o); });
+        }
+        pop('dup-per', F.p);
+        pop('dup-prt', F.pt);
+        pop('dup-cat', F.c);
+      }).catch(function() {});
+    }
+    if (F.s && fields[F.s] && fields[F.s].selection) {
+      var sel2 = document.getElementById('dup-st');
+      (fields[F.s].selection || []).forEach(function(opt) {
+        var o = document.createElement('option'); o.value = opt[0]; o.textContent = opt[1]; sel2.appendChild(o);
+      });
+    }
+    document.getElementById('dup-info').textContent = 'Ready \u2014 person=' + F.p + '  date=' + F.d + '  amount=' + F.a;
+  }).catch(function() {
+    document.getElementById('dup-info').textContent = 'Ready (fallback field detection)';
+  });
+
+  window.dupSearch = function() {
+    var F = window._dF;
+    var dom = [];
+    var per  = document.getElementById('dup-per').value;
+    var st   = document.getElementById('dup-st').value;
+    var prt  = document.getElementById('dup-prt').value;
+    var cat  = document.getElementById('dup-cat').value;
+    var from = document.getElementById('dup-from').value;
+    var to   = document.getElementById('dup-to').value;
+    if (per  && F.p)  dom.push([F.p,  'ilike', per]);
+    if (st   && F.s)  dom.push([F.s,  '=',     st]);
+    if (prt  && F.pt) dom.push([F.pt, 'ilike', prt]);
+    if (cat  && F.c)  dom.push([F.c,  'ilike', cat]);
+    if (from && F.d)  dom.push([F.d,  '>=',    from]);
+    if (to   && F.d)  dom.push([F.d,  '<=',    to]);
+
+    document.getElementById('dup-info').textContent = 'Loading records...';
+    document.getElementById('dup-r').innerHTML = '<div class="dem">Scanning\u2026 please wait</div>';
+
+    var ff = ['id'];
+    [F.p, F.s, F.d, F.a, F.n, F.pt, F.c].forEach(function(f) { if (f && ff.indexOf(f) < 0) ff.push(f); });
+
+    rpc({ model: 'expense.usage.line', method: 'search_read', args: [dom], kwargs: { fields: ff, limit: 5000 } }).then(function(recs) {
+      var groups = {};
+      var mode = window._dm;
+      recs.forEach(function(r) {
+        var person = getV(r, F.p);
+        var key;
+        if (mode === 'amt') {
+          var dt  = (r[F.d] || '').toString().substring(0, 10);
+          var amt = parseFloat(r[F.a] || 0).toFixed(2);
+          if (!amt || amt === '0.00') return;
+          key = person + '|' + amt + '|' + dt;
+        } else if (mode === 'amtany') {
+          var amt2 = parseFloat(r[F.a] || 0).toFixed(2);
+          if (!amt2 || amt2 === '0.00') return;
+          key = person + '|' + amt2;
+        } else {
+          var narr = (r[F.n] || '').trim().toLowerCase().substring(0, 80);
+          if (!narr || narr.length < 3) return;
+          key = person + '|' + narr;
+        }
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(r);
+      });
+
+      var gKeys = Object.keys(groups);
+      window._dG = [];
+      for (var i = 0; i < gKeys.length; i++) {
+        var rows = groups[gKeys[i]];
+        if (rows.length > 1) window._dG.push({ key: gKeys[i], rows: rows, conf: confScore(rows, F) });
+      }
+      dupRender();
+    }).catch(function(e) {
+      document.getElementById('dup-info').textContent = 'Error: ' + e.message;
+      document.getElementById('dup-r').innerHTML = '<div class="dem">Error: ' + e.message + '</div>';
+    });
+  };
+
+  window.dupRender = function() {
+    var groups = window._dG;
+    var F = window._dF;
+    var sortEl = document.getElementById('dup-sort');
+    var sort = sortEl ? sortEl.value : 'count';
+    var cW = { high: 3, medium: 2, low: 1 };
+    var sorted = groups.slice().sort(function(a, b) {
+      if (sort === 'count') return b.rows.length - a.rows.length;
+      if (sort === 'amt')   return parseFloat(b.rows[0][F.a] || 0) - parseFloat(a.rows[0][F.a] || 0);
+      if (sort === 'date')  return (b.rows[0][F.d] || '') > (a.rows[0][F.d] || '') ? 1 : -1;
+      if (sort === 'conf')  return cW[b.conf] - cW[a.conf];
+      return 0;
+    });
+
+    var total = 0;
+    for (var gi = 0; gi < groups.length; gi++) total += groups[gi].rows.length;
+
+    document.getElementById('dup-info').textContent = 'Found ' + groups.length + ' duplicate groups (' + total + ' records affected)';
+    document.getElementById('dup-sbar').style.display = groups.length ? 'flex' : 'none';
+    document.getElementById('dup-badge').textContent = groups.length + ' groups \u00B7 ' + total + ' records';
+
+    if (!groups.length) {
+      document.getElementById('dup-r').innerHTML = '<div class="dem">\u2713 No duplicates found!</div>';
+      return;
+    }
+
+    var diffFields = [F.a, F.d, F.n, F.pt, F.c, F.s].filter(Boolean);
+    var html = '';
+
+    for (var si = 0; si < sorted.length; si++) {
+      var g = sorted[si];
+      var confCls   = { high: 'ch', medium: 'cm', low: 'cl' }[g.conf];
+      var confLabel = { high: 'High', medium: 'Medium', low: 'Low' }[g.conf];
+      var parts = g.key.split('|');
+      var person = parts[0];
+      var lbl = window._dm === 'narr'
+        ? '"' + parts[1].substring(0, 35) + '"'
+        : '\u20B9' + parseFloat(parts[1]).toLocaleString('en-IN') + (parts[2] ? ' on ' + parts[2] : '');
+
+      var differs = {};
+      for (var di = 0; di < diffFields.length; di++) {
+        var df = diffFields[di];
+        var seen2 = {};
+        var diffCount = 0;
+        for (var ri = 0; ri < g.rows.length; ri++) {
+          var v = getV(g.rows[ri], df);
+          if (!seen2[v]) { seen2[v] = 1; diffCount++; }
+        }
+        differs[df] = diffCount > 1;
+      }
+
+      html += '<div class="dg"><div class="dgh"><span class="' + confCls + '">' + confLabel + '</span>'
+        + '<b>' + person + '</b> \u2014 ' + lbl + '<span class="gi">' + g.rows.length + ' records</span></div>';
+
+      for (var rj = 0; rj < g.rows.length; rj++) {
+        var r   = g.rows[rj];
+        var amt = parseFloat(r[F.a] || 0).toLocaleString('en-IN');
+        var dt  = (r[F.d] || '').toString().substring(0, 10);
+        var narr    = getV(r, F.n);
+        var partner = getV(r, F.pt);
+        var st2     = getV(r, F.s);
+        var url = '/odoo/expense-usage/' + r.id;
+        var amtCls  = differs[F.a] ? 'xdf' : 'xds';
+        var dtCls   = differs[F.d] ? 'xdf' : '';
+        var narrCls = differs[F.n] ? 'xdf' : '';
+
+        html += '<div class="dr2">'
+          + '<input type="checkbox" data-id="' + r.id + '" onchange="dupSelCh()">'
+          + '<div class="drb" onclick="window.open(\'' + url + '\',\'_blank\')">'
+          + '<div class="drt"><span class="drid">#' + r.id + (st2 ? ' \u00B7 ' + st2 : '') + '</span>'
+          + '<span class="dramt ' + amtCls + '">\u20B9' + amt + '</span></div>'
+          + '<span class="drdt ' + dtCls + '">' + dt + (partner ? ' \u00B7 ' + partner : '') + '</span>'
+          + (narr ? '<span class="drnarr ' + narrCls + '">' + narr + '</span>' : '')
+          + '<span class="drlk">Open \u2197</span>'
+          + '</div></div>';
+      }
+      html += '</div>';
+    }
+    document.getElementById('dup-r').innerHTML = html;
+  };
+
+  window.dupSelCh = function() {
+    var cbs = document.querySelectorAll('#olp-dup input[type=checkbox]:checked');
+    var n = cbs.length;
+    var el = document.getElementById('dup-selinfo');
+    el.style.display = n ? 'block' : 'none';
+    el.textContent = n + ' record' + (n !== 1 ? 's' : '') + ' selected \u2014 click Mark Selected to add note';
+  };
+
+  window.dupExport = function() {
+    var groups = window._dG;
+    var F = window._dF;
+    if (!groups.length) { alert('Run Find Duplicates first.'); return; }
+    var rows = [['Group', 'Confidence', 'Person', 'Amount', 'Date', 'Narration', 'Partner', 'Status', 'Record ID']];
+    for (var i = 0; i < groups.length; i++) {
+      var g = groups[i];
+      for (var j = 0; j < g.rows.length; j++) {
+        var r = g.rows[j];
+        rows.push([
+          i + 1, g.conf,
+          getV(r, F.p),
+          parseFloat(r[F.a] || 0).toFixed(2),
+          (r[F.d] || '').toString().substring(0, 10),
+          '"' + (getV(r, F.n) || '').replace(/"/g, '""') + '"',
+          getV(r, F.pt),
+          getV(r, F.s),
+          r.id
+        ]);
+      }
+    }
+    var csv = rows.map(function(row) { return row.join(','); }).join('\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'duplicates_' + new Date().toISOString().substring(0, 10) + '.csv';
+    a.click();
+  };
+
+  window.dupMark = function() {
+    var cbs = document.querySelectorAll('#olp-dup input[type=checkbox]:checked');
+    var checked = [];
+    for (var i = 0; i < cbs.length; i++) checked.push(cbs[i]);
+    if (!checked.length) { alert('Select records using checkboxes first.'); return; }
+    if (!confirm('Post a duplicate warning log note on ' + checked.length + ' selected record(s)?')) return;
+    var ids = checked.map(function(c) { return parseInt(c.dataset.id); });
+    document.getElementById('dup-info').textContent = 'Posting notes on ' + ids.length + ' records...';
+    var proms = ids.map(function(id) {
+      return rpc({ model: 'expense.usage.line', method: 'message_post', args: [[id]], kwargs: {
+        body: '<p>\u26A0\uFE0F <b>Possible duplicate entry</b> \u2014 flagged by Duplicate Finder. Please review and delete if this is a duplicate.</p>',
+        message_type: 'comment',
+        subtype_xmlid: 'mail.mt_note'
+      }});
+    });
+    Promise.all(proms).then(function() {
+      document.getElementById('dup-info').textContent = '\u2713 Warning notes posted on ' + ids.length + ' records successfully.';
+      for (var i = 0; i < checked.length; i++) checked[i].checked = false;
+      dupSelCh();
+    }).catch(function(e) {
+      document.getElementById('dup-info').textContent = 'Error posting notes: ' + e.message;
+    });
+  };
+}
+
+window.addEventListener('load', function() {
+  var src = dupBookmarklet.toString();
+  var oneliner = src.replace(/\/\/[^\n]*/g, '').replace(/\r?\n\s*/g, ' ').replace(/\s{2,}/g, ' ');
+  document.getElementById('code').value = 'javascript:void((' + oneliner + ')())';
+});
+
+function copyIt() {
+  var t = document.getElementById('code');
+  t.select();
+  document.execCommand('copy');
+  var ok = document.getElementById('ok');
+  ok.style.display = 'inline';
+  setTimeout(function() { ok.style.display = 'none'; }, 2500);
+}
+</script>
+</body>
+</html>
